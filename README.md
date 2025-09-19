@@ -193,7 +193,7 @@ ansible -i ~/ansible-k8s/inventory.ini all -m ping
 ```
 - Expected output should show "SUCCESS" for all nodes.
 
-#### 3.2 After Configuring Ansible, Run the ![playbook.yml](playbook.yaml) to install following
+#### 3.2 After Configuring Ansible, Run the ![playbook.yml](Scripts/playbook.yaml) to install following
 
 - On Provisioner Server: Java, Jenkins.
 - On KMaster-JenSlave : K8s(kubelet kubeadm kubectl), Java
@@ -204,7 +204,7 @@ ansible -i ~/ansible-k8s/inventory.ini all -m ping
 
 
 
-## 4. Then manually Execute the commands from the file ![K8s-Master-Initialization.txt](K8s-Master-Initialization.txt) fileONLY on "Master Node" For the instializong, Configuring Kubectl, Creating the hash for Slaves to join.
+## 4. Then manually Execute the commands from the file ![K8s-Master-Initialization.txt](Scripts/K8s-Master-Initialization.md) fileONLY on "Master Node" For the instializong, Configuring Kubectl, Creating the hash for Slaves to join.
 
 
 ## 5. Then manually Executing the below commands  on "Kubernetes Slave Node " for joining the Master.
@@ -240,7 +240,7 @@ kubectl get nodes
 
 ![alt text](images/image-5.png)
 
-## 6. Then Proceed with the Installation of the Docker on both Slaves and Master by following ![Docker-Installation](Docker-Installation.md)
+## 6. Then Proceed with the Installation of the Docker on both Slaves and Master by following ![Docker-Installation](Scripts/Docker-Installation.md)
 
 
 ## 7. Jenkins Setup and Pipeline Configuration
