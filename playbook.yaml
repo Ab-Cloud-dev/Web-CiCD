@@ -1,0 +1,44 @@
+---
+- name: Install Java and Jenkins on Ubuntu
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install dependices  (OpenJDK 17)
+      apt:
+        name:
+             - fontconfig
+             - wget
+
+    - name: Run K8s slave installation script
+      script: jenkins.sh
+
+
+
+
+- name: Installing Java and K8s on Master
+  hosts: K-m
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Java (OpenJDK 17)
+      apt:
+        name: openjdk-17-jdk
+        state: present
+
+    - name: Run Java installation script
+      script: k8s.sh
+
+
+- name: Installing K8s on Slaves
+  hosts: Slave
+  become: yes
+  tasks:
+    - name: Run K8s slave installation script
+      script: k8s.sh

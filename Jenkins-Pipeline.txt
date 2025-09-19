@@ -1,0 +1,53 @@
+pipeline {
+    agent none
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials("<Credential-ID>")
+        IMAGE_TAG = "${BUILD_NUMBER}"
+        IMAGE_NAME = "<Image-name>" // Provide Image Name
+    }
+    stages {
+        stage('git') {
+            agent {
+                label "KMasterNode"
+            }
+            steps {
+                script {
+                    git branch: 'main', url: 'https://github.com/Ab-Cloud-dev/Web-CiCD.git' // Provide github URL
+                }
+            }
+        }
+        stage('docker') {
+            agent {
+                label "KMasterNode"
+            }
+            steps {
+                script {
+                    sh "sudo docker build . -t ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "sudo docker build . -t ${IMAGE_NAME}:latest"
+                    sh 'sudo docker login -u ${DOCKERHUB_CREDENTIALS_USR} -p ${DOCKERHUB_CREDENTIALS_PSW}'
+                    sh "sudo docker push ${IMAGE_NAME}:${IMAGE_TAG}"
+                    sh "sudo docker push ${IMAGE_NAME}:latest"
+                }
+            }
+        }
+        stage('kubernetes') {
+            agent {
+                label "KMasterNode"
+            }
+            steps {
+                script {
+                    // Update the deployment with new image tag
+                    sh "sed -i 's|image: ${IMAGE_NAME}.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g' deployment.yaml"
+                    sh 'kubectl apply -f deployment.yaml'
+                    sh 'kubectl apply -f service.yaml'
+                    
+                    // Alternative: Use kubectl set image command
+                    // sh "kubectl set image deployment/my-deployment my-deployment=${IMAGE_NAME}:${IMAGE_TAG}"
+                    
+                    // Wait for rollout to complete
+                    sh 'kubectl rollout status deployment/my-deployment --timeout=300s'
+                }
+            }
+        }
+    }
+}
